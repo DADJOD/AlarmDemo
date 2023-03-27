@@ -1,11 +1,16 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.alarmdemo
 
+import android.annotation.SuppressLint
 import android.app.IntentService
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 
-@Suppress("DEPRECATION")
 open class EventService : IntentService("EventService") {        // in Kotlin u cant extend more that 1 class
     companion object {
         const val NUM_E = "num"
@@ -17,13 +22,21 @@ open class EventService : IntentService("EventService") {        // in Kotlin u 
         }
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith(
-        "Log.d(\"happySDK\", \"onHandleIntent \${intent?.getIntExtra(NUM_E, -1)}\")",
-        "android.util.Log",
-        "com.example.alarmdemo.EventService.Companion.NUM_E"
-    )
-    )
+    @SuppressLint("MissingPermission")
     override fun onHandleIntent(intent: Intent?) {
-        Log.d("happySDK", "onHandleIntent ${intent?.getIntExtra(NUM_E, -1)}")
+        val num = intent?.getIntExtra(NUM_E, -1)
+        Log.d("happySDK", "$NUM_E $num")
+
+        val ua = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 2, ua, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val builder = NotificationCompat.Builder(this)
+            .setSmallIcon(android.R.drawable.ic_dialog_map)
+            .setContentTitle("Hello!")
+            .setContentText("got $num")
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        NotificationManagerCompat.from(this).notify(1, builder.build())
     }
 }

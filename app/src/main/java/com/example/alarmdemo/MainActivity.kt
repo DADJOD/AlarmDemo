@@ -8,7 +8,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import java.util.concurrent.TimeUnit
 
-@Suppress("UNUSED_PARAMETER")
 class MainActivity : AppCompatActivity() {
     private lateinit var am: AlarmManager
 
@@ -17,15 +16,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 
-    @SuppressLint("UnspecifiedImmutableFlag")
     fun buttonClick(view: View) {
         am = getSystemService(ALARM_SERVICE) as AlarmManager
 
-        // startService(intent)
+        startService(intent)
 
         val intent = EventService.getStartIntent(this@MainActivity, 123)
         val pendingIntent = PendingIntent.getService(this@MainActivity, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val targetTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5)
+        val targetTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(1)
 
         am.set(AlarmManager.RTC, targetTime, pendingIntent)
     }
